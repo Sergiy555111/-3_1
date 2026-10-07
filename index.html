@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon Battle</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #87CEEB;
+            padding-top: 50px;
+        }
+        .playground {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-top: 50px;
+        }
+        .pokemon {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            width: 200px;
+        }
+        .health-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 15px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .health-progress {
+            background: #32CD32;
+            height: 100%;
+            width: 100%;
+            transition: width 0.3s ease, background 0.3s ease;
+        }
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+            border: 2px solid #ccc;
+            background: #eee;
+            border-radius: 5px;
+            transition: 0.2s;
+        }
+        button:hover { 
+            background: #ddd; 
+            border-color: #aaa;
+        }
+        button:disabled { 
+            opacity: 0.5; 
+            cursor: not-allowed; 
+        }
+        img {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <img src="https://upload.wikimedia.org/wikipedia/commons/9/98/International_Pok%C3%A9mon_logo.svg" alt="Pokemon" width="200">
+
+    <div class="playground">
+        <div class="pokemon">
+            <h3 id="name-character">Pikachu</h3>
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" width="100" alt="Pikachu">
+            <div class="health-bar">
+                <div class="health-progress" id="progressbar-character"></div>
+            </div>
+            <p id="health-character">100 / 100</p>
+        </div>
+
+        <div class="controls">
+            <button id="btn-kick">Thunder Jolt (Max 20 dmg)</button>
+            <button id="btn-special">Electro Ball (Max 40 dmg)</button>
+        </div>
+
+        <div class="pokemon">
+            <h3 id="name-enemy">Charmander</h3>
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png" width="100" alt="Charmander">
+            <div class="health-bar">
+                <div class="health-progress" id="progressbar-enemy"></div>
+            </div>
+            <p id="health-enemy">100 / 100</p>
+        </div>
+    </div>
+
+    <script>
+        const character = {
+            name: 'Pikachu',
+            defaultHP: 100,
+            damageHP: 100,
+            elHP: document.getElementById('health-character'),
+            elProgressbar: document.getElementById('progressbar-character'),
+        };
+
+        const enemy = {
+            name: 'Charmander',
+            defaultHP: 100,
+            damageHP: 100,
+            elHP: document.getElementById('health-enemy'),
+            elProgressbar: document.getElementById('progressbar-enemy'),
+        };
+
+        const $btnKick = document.getElementById('btn-kick');
+        const $btnSpecial = document.getElementById('btn-special');
+
+        function init() {
+            renderHP(character);
+            renderHP(enemy);
+        }
+
+        function renderHP(person) {
+            renderHPLife(person);
+            renderProgressbarHP(person);
+        }
+
+        function renderHPLife(person) {
+            person.elHP.innerText = person.damageHP + ' / ' + person.defaultHP;
+        }
+
+        function renderProgressbarHP(person) {
+            if (person.damageHP < 30) {
+                person.elProgressbar.style.background = '#ff0000';
+            } else if (person.damageHP < 60) {
+                person.elProgressbar.style.background = '#ffa500';
+            } else {
+                person.elProgressbar.style.background = '#32CD32';
+            }
+            person.elProgressbar.style.width = person.damageHP + '%';
+        }
+
+        function changeHP(count, person) {
+            if (person.damageHP < count) {
+                person.damageHP = 0;
+                alert(person.name + ' програв бій!');
+                $btnKick.disabled = true;
+                $btnSpecial.disabled = true;
+            } else {
+                person.damageHP -= count;
+            }
+            renderHP(person);
+        }
+
+        function random(num) {
+            return Math.ceil(Math.random() * num);
+        }
+
+        $btnKick.addEventListener('click', function () {
+            changeHP(random(20), character);
+            changeHP(random(20), enemy);
+        });
+
+        $btnSpecial.addEventListener('click', function () {
+            changeHP(random(40), character);
+            changeHP(random(40), enemy);
+        });
+
+        init();
+    </script>
+</body>
+</html>
